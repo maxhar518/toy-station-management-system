@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Archive, Boxes, CircleDollarSign, Download, Layers3, Pencil, Plus, SlidersHorizontal, Tag, Trash2 } from 'lucide-react'
 
 export default function Home() {
   const [items, setItems] = useState([])
@@ -74,76 +75,69 @@ export default function Home() {
   }
 
   return (
-    <div className="container">
-      <header>
-        <h1>Toy Station — Inventory</h1>
-        <div className="actions">
-          <button onClick={() => window.location.href = '/api/items/export'}>Export to Excel</button>
-        </div>
-      </header>
+    <div className="app-shell">
+      <div className="container">
+        <header className="topbar">
+          <div className="brand-lockup">
+            <div className="brand-mark"><Archive size={22} strokeWidth={2.5} /></div>
+            <div>
+              <p className="eyebrow">Toy Station / Operations</p>
+              <h1>Inventory room</h1>
+            </div>
+          </div>
+          <div className="actions">
+            <button className="button button-secondary" onClick={() => window.location.href = '/api/items/export'}>
+              <Download size={17} /> Export <span className="desktop-only">to Excel</span>
+            </button>
+          </div>
+        </header>
 
-      <section className="form">
-        <h2>Add item</h2>
-        <form onSubmit={addItem}>
-          <input required placeholder="Name" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} />
-          <input placeholder="SKU" value={form.sku} onChange={e=>setForm({...form, sku: e.target.value})} />
-          <input placeholder="Price" type="number" step="0.01" value={form.price} onChange={e=>setForm({...form, price: e.target.value})} />
-          <input placeholder="Quantity" type="number" value={form.quantity} onChange={e=>setForm({...form, quantity: e.target.value})} />
-          <input placeholder="Tags (comma-separated)" value={form.tags} onChange={e=>setForm({...form, tags: e.target.value})} />
-          <textarea placeholder="Description" value={form.description} onChange={e=>setForm({...form, description: e.target.value})} />
-          <button type="submit">Add</button>
-        </form>
-      </section>
+        <section className="intro-row">
+          <div>
+            <p className="page-kicker">A tidy view of what is on the shelf</p>
+            <p className="muted">Track stock, pricing, and the small details that keep every toy moving.</p>
+          </div>
+          <div className="status-pill"><span className="status-dot" /> Live inventory</div>
+        </section>
 
-      <section className="list">
-        <h2>Items</h2>
-        {loading ? <p>Loading…</p> : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>SKU</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Tags</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map(item => (
-                <tr key={item._id}>
-                  <td>{item.name}</td>
-                  <td>{item.sku}</td>
-                  <td>{item.price}</td>
-                  <td>{item.quantity}</td>
-                  <td>{(item.tags||[]).join(', ')}</td>
-                  <td>
-                    <button onClick={()=>editItem(item)}>Edit</button>
-                    <button onClick={()=>adjustItem(item)}>Adjust</button>
-                    <button onClick={()=>removeItem(item._id)}>Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+        <section className="stats-grid" aria-label="Inventory summary">
+          <div className="stat-card accent-yellow"><span className="stat-icon"><Boxes size={19} /></span><div><span className="stat-label">Items listed</span><strong>{items.length}</strong></div></div>
+          <div className="stat-card accent-blue"><span className="stat-icon"><Layers3 size={19} /></span><div><span className="stat-label">Units in stock</span><strong>{items.reduce((total, item) => total + Number(item.quantity || 0), 0)}</strong></div></div>
+          <div className="stat-card accent-coral"><span className="stat-icon"><CircleDollarSign size={19} /></span><div><span className="stat-label">Stock value</span><strong>${items.reduce((total, item) => total + Number(item.price || 0) * Number(item.quantity || 0), 0).toFixed(2)}</strong></div></div>
+        </section>
 
-      <footer>
-        <p>Deploy this app to Vercel and set MONGODB_URI in Environment Variables.</p>
-      </footer>
+        <section className="panel form-panel">
+          <div className="section-heading"><div><p className="eyebrow">New arrival</p><h2>Add an item</h2></div><span className="heading-icon"><Plus size={20} /></span></div>
+          <form onSubmit={addItem}>
+            <input required placeholder="Name *" value={form.name} onChange={e=>setForm({...form, name: e.target.value})} />
+            <input placeholder="SKU" value={form.sku} onChange={e=>setForm({...form, sku: e.target.value})} />
+            <input placeholder="Price" type="number" step="0.01" value={form.price} onChange={e=>setForm({...form, price: e.target.value})} />
+            <input placeholder="Quantity" type="number" value={form.quantity} onChange={e=>setForm({...form, quantity: e.target.value})} />
+            <input className="wide-input" placeholder="Tags (comma-separated)" value={form.tags} onChange={e=>setForm({...form, tags: e.target.value})} />
+            <textarea className="wide-input" placeholder="Description" value={form.description} onChange={e=>setForm({...form, description: e.target.value})} />
+            <button className="button button-primary" type="submit"><Plus size={17} /> Add to inventory</button>
+          </form>
+        </section>
 
-      <style jsx>{`
-        .container { max-width: 980px; margin: 24px auto; padding: 0 16px; }
-        header { display:flex; justify-content:space-between; align-items:center; }
-        .form { margin-top: 20px; }
-        form { display:flex; flex-wrap:wrap; gap:8px; }
-        form input, form textarea { padding:8px; flex:1 1 200px; }
-        form textarea { min-height:64px; }
-        table { width:100%; border-collapse:collapse; margin-top:16px; }
-        th, td { border:1px solid #ddd; padding:8px; text-align:left; }
-        button { margin-right:6px; }
-      `}</style>
+        <section className="panel list-panel">
+          <div className="section-heading list-heading"><div><p className="eyebrow">Current collection</p><h2>All items <span className="count-badge">{items.length}</span></h2></div><Tag className="muted-icon" size={22} /></div>
+          {loading ? <p className="empty-state">Loading your inventory...</p> : items.length === 0 ? <div className="empty-state"><Boxes size={28} /><p>No items yet. Add the first toy above.</p></div> : (
+            <div className="table-wrap"><table>
+              <thead>
+                <tr><th>Name</th><th>SKU</th><th>Price</th><th>Quantity</th><th>Tags</th><th><span className="sr-only">Actions</span></th></tr>
+              </thead>
+              <tbody>
+                {items.map(item => (
+                  <tr key={item._id}>
+                    <td className="item-name">{item.name}</td><td className="sku">{item.sku || '—'}</td><td>${Number(item.price || 0).toFixed(2)}</td><td><span className={`quantity ${Number(item.quantity) === 0 ? 'quantity-empty' : ''}`}>{item.quantity}</span></td><td className="tags">{(item.tags||[]).join(', ') || '—'}</td>
+                    <td className="row-actions"><button className="icon-button" aria-label={`Edit ${item.name}`} title="Edit item" onClick={()=>editItem(item)}><Pencil size={16} /></button><button className="icon-button" aria-label={`Adjust ${item.name}`} title="Adjust quantity" onClick={()=>adjustItem(item)}><SlidersHorizontal size={16} /></button><button className="icon-button danger" aria-label={`Delete ${item.name}`} title="Delete item" onClick={()=>removeItem(item._id)}><Trash2 size={16} /></button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table></div>
+          )}
+        </section>
+      </div>
     </div>
   )
 }

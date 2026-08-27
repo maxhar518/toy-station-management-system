@@ -1,5 +1,5 @@
-import dbConnect from '../../../../lib/mongoose'
-import Item from '../../../../models/Item'
+import dbConnect from '../../../lib/mongoose'
+import Item from '../../../models/Item'
 
 export default async function handler(req, res) {
   const { method } = req
